@@ -214,7 +214,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 	private Bitmap tryLoadBitmap() throws TaskCancelledException {
 		Bitmap bitmap = null;
 		try {
-			File imageFile = configuration.diskCache.get(uri);
+			File imageFile = configuration.diskCache.get(uri);//从磁盘缓存中获取
 			if (imageFile != null && imageFile.exists() && imageFile.length() > 0) {
 				L.d(LOG_LOAD_IMAGE_FROM_DISK_CACHE, memoryCacheKey);
 				loadedFrom = LoadedFrom.DISC_CACHE;
@@ -222,7 +222,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 				checkTaskNotActual();
 				bitmap = decodeImage(Scheme.FILE.wrap(imageFile.getAbsolutePath()));
 			}
-			if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+			if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {//如果磁盘缓存中都没有
 				L.d(LOG_LOAD_IMAGE_FROM_NETWORK, memoryCacheKey);
 				loadedFrom = LoadedFrom.NETWORK;
 

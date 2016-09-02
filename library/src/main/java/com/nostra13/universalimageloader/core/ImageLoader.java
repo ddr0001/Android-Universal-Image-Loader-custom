@@ -244,6 +244,7 @@ public class ImageLoader {
 			options = configuration.defaultDisplayImageOptions;
 		}
 
+		//判断uri是否为null
 		if (TextUtils.isEmpty(uri)) {
 			engine.cancelDisplayTaskFor(imageAware);
 			listener.onLoadingStarted(uri, imageAware.getWrappedView());
@@ -256,6 +257,7 @@ public class ImageLoader {
 			return;
 		}
 
+		//如果targetSize为null，则根据imageAware来定义宽与高，如果没有定义则使用屏幕的宽与高
 		if (targetSize == null) {
 			targetSize = ImageSizeUtils.defineTargetSizeForView(imageAware, configuration.getMaxImageSize());
 		}
@@ -264,6 +266,7 @@ public class ImageLoader {
 
 		listener.onLoadingStarted(uri, imageAware.getWrappedView());
 
+		//从缓存中获取Bitmap，没有则执行解码操作
 		Bitmap bmp = configuration.memoryCache.get(memoryCacheKey);
 		if (bmp != null && !bmp.isRecycled()) {
 			L.d(LOG_LOAD_IMAGE_FROM_MEMORY_CACHE, memoryCacheKey);
@@ -293,9 +296,9 @@ public class ImageLoader {
 					options, listener, progressListener, engine.getLockForUri(uri));
 			LoadAndDisplayImageTask displayTask = new LoadAndDisplayImageTask(engine, imageLoadingInfo,
 					defineHandler(options));
-			if (options.isSyncLoading()) {
+			if (options.isSyncLoading()) {//同步操作
 				displayTask.run();
-			} else {
+			} else {//异步操作
 				engine.submit(displayTask);
 			}
 		}

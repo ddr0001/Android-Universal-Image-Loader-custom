@@ -172,10 +172,10 @@ public class BaseImageDownloader implements ImageDownloader {
 	 * @return {@link InputStream} of image
 	 * @throws IOException if some I/O error occurs reading from file system
 	 */
-	protected InputStream getStreamFromFile(String imageUri, Object extra) throws IOException {
+	protected InputStream getStreamFromFile(String imageUri, Object extra) throws IOException {//从本地文件中获取流
 		String filePath = Scheme.FILE.crop(imageUri);
 		if (isVideoFileUri(imageUri)) {
-			return getVideoThumbnailStream(filePath);
+			return getVideoThumbnailStream(filePath);//本地视频文件
 		} else {
 			BufferedInputStream imageStream = new BufferedInputStream(new FileInputStream(filePath), BUFFER_SIZE);
 			return new ContentLengthInputStream(imageStream, (int) new File(filePath).length());
@@ -280,11 +280,13 @@ public class BaseImageDownloader implements ImageDownloader {
 		throw new UnsupportedOperationException(String.format(ERROR_UNSUPPORTED_SCHEME, imageUri));
 	}
 
+	//判断是不是为视频的uri(content://)
 	private boolean isVideoContentUri(Uri uri) {
 		String mimeType = context.getContentResolver().getType(uri);
 		return mimeType != null && mimeType.startsWith("video/");
 	}
 
+	//判断是不是为视频的uri(File://)
 	private boolean isVideoFileUri(String uri) {
 		String extension = MimeTypeMap.getFileExtensionFromUrl(uri);
 		String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
