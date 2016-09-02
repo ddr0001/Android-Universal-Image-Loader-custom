@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/tools">
 
 	<!-- Activity titles -->
 	<string name="app_name">Universal Image Loader</string>
@@ -7,6 +7,7 @@
 	<string name="ac_name_image_grid">Image Grid Example</string>
 	<string name="ac_name_image_pager">Image Pager Example</string>
 	<string name="ac_name_image_gallery">Image Gallery Example</string>
+	<string name="ac_name_file_browser">File Browser</string>
 	<string name="ac_name_complex">Complex Example</string>
 	<!-- Labels -->
 	<string name="label_examples">Examples</string>
@@ -15,6 +16,7 @@
 	<string name="button_image_pager">ViewPager</string>
 	<string name="button_image_gallery">Gallery</string>
 	<string name="button_list_and_grid">ViewPager (ListView + GridView)</string>
+	<string name="button_file_browser">FileBrowser</string>
 
 	<string name="title_list">List</string>
 	<string name="title_grid">Grid</string>
@@ -26,5 +28,12 @@
 
 	<!-- Content descriptions -->
 	<string name="descr_image">Image</string>
+
+
+	<string name="count_folder"><xliff:g id="count">%d</xliff:g> 个文件夹</string>
+	<string name="count_folders"><xliff:g id="count">%d</xliff:g> 个文件夹</string>
+	<string name="count_file"><xliff:g id="count">%d</xliff:g> 个文件</string>
+	<string name="count_files"><xliff:g id="count">%d</xliff:g> 个文件</string>
+	<string name="combine_two_strings_with_comma" translatable="false">%1$s , %2$s</string>
 
 </resources>

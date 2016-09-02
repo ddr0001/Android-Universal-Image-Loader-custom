@@ -57,6 +57,14 @@
 			android:layout_marginRight="10dip"
 			android:onClick="onFragmentsClick"
 			android:text="@string/button_list_and_grid" />
+
+		<Button
+			android:layout_width="320dp"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dip"
+			android:layout_marginRight="10dip"
+			android:onClick="onFileBrowserClick"
+			android:text="@string/button_file_browser" />
 	</LinearLayout>
 
 </ScrollView>

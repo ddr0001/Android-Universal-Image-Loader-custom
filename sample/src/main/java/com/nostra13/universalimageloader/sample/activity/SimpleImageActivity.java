@@ -20,10 +20,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import com.nostra13.universalimageloader.sample.Constants;
 import com.nostra13.universalimageloader.sample.R;
+import com.nostra13.universalimageloader.sample.fragment.FileBrowserFragment;
 import com.nostra13.universalimageloader.sample.fragment.ImageGalleryFragment;
 import com.nostra13.universalimageloader.sample.fragment.ImageGridFragment;
 import com.nostra13.universalimageloader.sample.fragment.ImageListFragment;
 import com.nostra13.universalimageloader.sample.fragment.ImagePagerFragment;
+import com.nostra13.universalimageloader.sample.fragmentBackHandler.BackHandlerHelper;
 
 /**
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -72,9 +74,24 @@ public class SimpleImageActivity extends FragmentActivity {
 				}
 				titleRes = R.string.ac_name_image_gallery;
 				break;
+			case FileBrowserFragment.INDEX:
+				tag = FileBrowserFragment.class.getSimpleName();
+				fr = getSupportFragmentManager().findFragmentByTag(tag);
+				if (fr == null) {
+					fr = new FileBrowserFragment();
+				}
+				titleRes = R.string.ac_name_file_browser;
+				break;
 		}
 
 		setTitle(titleRes);
 		getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fr, tag).commit();
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (!BackHandlerHelper.handleBackPress(this)) {
+			super.onBackPressed();
+		}
 	}
 }

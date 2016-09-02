@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <plurals name="NFolders">
+        <item quantity="one">@string/count_folder</item>
+        <item quantity="other">@string/count_folders</item>
+    </plurals>
+
+    <plurals name="NFiles">
+        <item quantity="one">@string/count_file</item>
+        <item quantity="other">@string/count_files</item>
+    </plurals>
+
+</resources>
