@@ -1,13 +1,28 @@
 package com.nostra13.universalimageloader.sample.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.mcs.library.adapter.recyclerView.CommonAdapter;
 import com.mcs.library.adapter.recyclerView.base.ViewHolder;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.display.CircleBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.download.CustomImageDownLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.nostra13.universalimageloader.sample.R;
 import com.nostra13.universalimageloader.sample.models.FolderEntity;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -21,10 +36,36 @@ import java.util.List;
 public class FolderAdapter extends CommonAdapter<FolderEntity> {
 
     private List<FolderEntity> mList;
+    private DisplayImageOptions mOptions;
 
     public FolderAdapter(Context context, int layoutId, List<FolderEntity> datas) {
         super(context, layoutId, datas);
         mList = datas;
+
+        mOptions = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.ic_stub)
+                .showImageForEmptyUri(R.drawable.ic_empty)
+                .showImageOnFail(R.drawable.ic_error)
+                .cacheInMemory(false)
+                .cacheOnDisk(false)
+                .considerExifParams(true)
+                .build();
+
+
+        ImageLoader.getInstance().destroy();//如果已经初始化过，就得destroy之后才能再次init成功
+        ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(context);
+        config.threadPriority(Thread.NORM_PRIORITY - 2);
+        config.denyCacheImageMultipleSizesInMemory();
+        config.diskCacheFileNameGenerator(new Md5FileNameGenerator());
+        config.diskCacheSize(50 * 1024 * 1024); // 50 MiB
+        config.tasksProcessingOrder(QueueProcessingType.LIFO);
+        config.imageDownloader(new CustomImageDownLoader(mContext));
+        config.writeDebugLogs(); // Remove for release app
+
+        // Initialize ImageLoader with configuration.
+        ImageLoader.getInstance().init(config.build());
+        ImageLoader.getInstance().clearDiskCache();
+        ImageLoader.getInstance().clearMemoryCache();
     }
 
     @Override
@@ -53,7 +94,11 @@ public class FolderAdapter extends CommonAdapter<FolderEntity> {
                 content = songNumbers;
             }
         } else {
-            holder.setImageResource(R.id.folder_ic, R.drawable.ic_launcher);
+            //holder.setImageResource(R.id.folder_ic, R.drawable.ic_launcher);
+            String uri = "file://" + folderEntity.getPath();
+            ImageLoader.getInstance().displayImage
+                    (uri, (ImageView) holder.getView(R.id.folder_ic), mOptions, mImageLoaderListener);
+
             content = folderEntity.getTotalSize();
             //loadAlbum(folderEntity, holder);
         }
@@ -72,6 +117,16 @@ public class FolderAdapter extends CommonAdapter<FolderEntity> {
                         showImageOnFail(R.mipmap.ic_launcher).
                         resetViewBeforeLoading(true).build());
     }*/
+
+    private  SimpleImageLoadingListener mImageLoaderListener =  new SimpleImageLoadingListener() {
+
+        @Override
+        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            if (loadedImage != null) {
+                ImageView imageView = (ImageView) view;
+            }
+        }
+    };
 
     /**
      * 按两个String组合起来   String , String
