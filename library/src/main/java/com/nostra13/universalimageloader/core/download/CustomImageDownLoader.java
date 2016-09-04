@@ -16,11 +16,14 @@ import com.nostra13.universalimageloader.utils.MultimediaTypeUtils;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.images.Artwork;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -102,7 +105,7 @@ public class CustomImageDownLoader extends BaseImageDownloader {
         L.d("========" + TAG + " getMusicThumbnailStream filePath==%s", filePath);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
             Bitmap bitmap = null;
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            /*MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             try {
                 retriever.setDataSource(filePath); //设置数据源
                 byte[] embedPic = retriever.getEmbeddedPicture(); //得到字节型数据
@@ -117,18 +120,19 @@ public class CustomImageDownLoader extends BaseImageDownloader {
                 } catch (RuntimeException ex) {
                     // Ignore failures while cleaning up.
                 }
-            }
+            }*/
 
-            /*AudioFile f = null;
+            AudioFile f = null;
             try {
                 f = AudioFileIO.read(new File(filePath));
                 Tag tag = f.getTag();
-                Iterator iterator = tag.getFields();
-                while(iterator.hasNext())
-                {
-                    L.d("========" + TAG + " getMusicThumbnailStream iterator.next==%s", iterator.next());
-                    //iterator.next();
+                if (tag.getArtworkList().size() != 0) {
+                    Artwork artworkFirst = tag.getArtworkList().get( 0 );
+                    bitmap = BitmapFactory.decodeByteArray( artworkFirst.getBinaryData(),
+                            0,
+                            artworkFirst.getBinaryData().length );
                 }
+                L.d("========" + TAG + " getMusicThumbnailStream bitamp==%s", bitmap);
             } catch (CannotReadException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -139,7 +143,7 @@ public class CustomImageDownLoader extends BaseImageDownloader {
                 e.printStackTrace();
             } catch (InvalidAudioFrameException e) {
                 e.printStackTrace();
-            }*/
+            }
 
             if (bitmap != null) {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
