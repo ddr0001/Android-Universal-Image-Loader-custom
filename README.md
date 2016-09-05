@@ -2,7 +2,7 @@
 
 ### 说明 ###
 
-　　分支于Android-Universal-Image-Loader
+分支于Android-Universal-Image-Loader
 
 （1）添加了音乐文件缩略图的获取（只适用于File://），基于Jaudiotagger库。
 
