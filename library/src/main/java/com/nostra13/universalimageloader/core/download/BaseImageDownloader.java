@@ -20,6 +20,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
@@ -29,6 +30,17 @@ import android.webkit.MimeTypeMap;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ContentLengthInputStream;
 import com.nostra13.universalimageloader.utils.IoUtils;
+import com.nostra13.universalimageloader.utils.L;
+import com.nostra13.universalimageloader.utils.MultimediaTypeUtils;
+
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.images.Artwork;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -46,8 +58,8 @@ import java.net.URLConnection;
  * Provides retrieving of {@link InputStream} of image by URI from network or file system or app resources.<br />
  * {@link URLConnection} is used to retrieve image stream from network.
  *
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
  * @since 1.8.0
+ * @changeRecord [2016-09-5 add getMusicThumbnail] <br/>
  */
 public class BaseImageDownloader implements ImageDownloader {
 	/** {@value} */
@@ -176,6 +188,8 @@ public class BaseImageDownloader implements ImageDownloader {
 		String filePath = Scheme.FILE.crop(imageUri);
 		if (isVideoFileUri(imageUri)) {
 			return getVideoThumbnailStream(filePath);//本地视频文件
+		} else if (isMusicFileUri(imageUri)) { //add by mochangsheng
+			return getMusicThumbnailStream(filePath);//本地音乐文件
 		} else {
 			BufferedInputStream imageStream = new BufferedInputStream(new FileInputStream(filePath), BUFFER_SIZE);
 			return new ContentLengthInputStream(imageStream, (int) new File(filePath).length());
@@ -193,6 +207,44 @@ public class BaseImageDownloader implements ImageDownloader {
 				return new ByteArrayInputStream(bos.toByteArray());
 			}
 		}
+		return null;
+	}
+
+	//add by mochangsheng
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
+	private InputStream getMusicThumbnailStream(String filePath) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
+			Bitmap bitmap = null;
+
+			AudioFile f = null;
+			try {
+				f = AudioFileIO.read(new File(filePath));
+				Tag tag = f.getTag();
+				if (tag.getArtworkList().size() != 0) {
+					Artwork artworkFirst = tag.getArtworkList().get( 0 );
+					bitmap = BitmapFactory.decodeByteArray( artworkFirst.getBinaryData(),
+							0,
+							artworkFirst.getBinaryData().length );
+				}
+			} catch (CannotReadException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (TagException e) {
+				e.printStackTrace();
+			} catch (ReadOnlyFileException e) {
+				e.printStackTrace();
+			} catch (InvalidAudioFrameException e) {
+				e.printStackTrace();
+			}
+
+			if (bitmap != null) {
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+				return new ByteArrayInputStream(bos.toByteArray());
+			}
+		}
+
 		return null;
 	}
 
@@ -286,10 +338,24 @@ public class BaseImageDownloader implements ImageDownloader {
 		return mimeType != null && mimeType.startsWith("video/");
 	}
 
-	//判断是不是为视频的uri(File://)
+
+	//判断是不是为视频的uri(File://)  //modify by mochangsheng
 	private boolean isVideoFileUri(String uri) {
-		String extension = MimeTypeMap.getFileExtensionFromUrl(uri);
-		String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-		return mimeType != null && mimeType.startsWith("video/");
+		if (MultimediaTypeUtils.getMultimediaType(uri)
+				.equals(MultimediaTypeUtils.MultimediaType.MMT_VIDEO)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	//add by mochangsheng
+	private boolean isMusicFileUri(String uri) {
+		if (MultimediaTypeUtils.getMultimediaType(uri)
+				.equals(MultimediaTypeUtils.MultimediaType.MMT_MUSIC)) {
+			return true;
+		}
+
+		return false;
 	}
 }
