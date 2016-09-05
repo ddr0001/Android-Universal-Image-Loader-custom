@@ -52,7 +52,7 @@ public class FolderAdapter extends CommonAdapter<FolderEntity> {
                 .build();
 
 
-        ImageLoader.getInstance().destroy();//如果已经初始化过，就得destroy之后才能再次init成功
+        /*ImageLoader.getInstance().destroy();//如果已经初始化过，就得destroy之后才能再次init成功
         ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(context);
         config.threadPriority(Thread.NORM_PRIORITY - 2);
         config.denyCacheImageMultipleSizesInMemory();
@@ -63,7 +63,7 @@ public class FolderAdapter extends CommonAdapter<FolderEntity> {
         config.writeDebugLogs(); // Remove for release app
 
         // Initialize ImageLoader with configuration.
-        ImageLoader.getInstance().init(config.build());
+        ImageLoader.getInstance().init(config.build());*/
         ImageLoader.getInstance().clearDiskCache();
         ImageLoader.getInstance().clearMemoryCache();
     }
@@ -94,7 +94,7 @@ public class FolderAdapter extends CommonAdapter<FolderEntity> {
                 content = songNumbers;
             }
         } else {
-            //holder.setImageResource(R.id.folder_ic, R.drawable.ic_launcher);
+            holder.setImageResource(R.id.folder_ic, R.drawable.ic_launcher);
             String uri = "file://" + folderEntity.getPath();
             ImageLoader.getInstance().displayImage
                     (uri, (ImageView) holder.getView(R.id.folder_ic), mOptions, mImageLoaderListener);

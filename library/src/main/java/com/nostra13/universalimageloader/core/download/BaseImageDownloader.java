@@ -26,7 +26,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
-import android.webkit.MimeTypeMap;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ContentLengthInputStream;
 import com.nostra13.universalimageloader.utils.IoUtils;
@@ -38,8 +37,10 @@ import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.audio.flac.metadatablock.MetadataBlockDataPicture;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.flac.FlacTag;
 import org.jaudiotagger.tag.images.Artwork;
 
 import java.io.BufferedInputStream;
